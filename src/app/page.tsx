@@ -1,9 +1,14 @@
+"use client"
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Button } from "@/components/ui/button";
+
 export default function Home() {
+  const {signOut} = useAuthActions();
   return (
-    <Button>
-      Shadcn Button
- 
-    </Button>
+    <>
+      <Button onClick={()=>signOut()}>
+      Log out
+      </Button>
+    </>
   );
 }
