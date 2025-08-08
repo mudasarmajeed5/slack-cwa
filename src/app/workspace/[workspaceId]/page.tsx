@@ -1,12 +1,8 @@
+"use client"
 
-interface WorkspaceIdPageProps {
-    params: Promise<{ workspaceId: string }>
-}
-const WorkspaceIdPage = async ({ params }: WorkspaceIdPageProps) => {
-    const { workspaceId } = await params;
+const WorkspaceIdPage = () => {
     return (
         <div>
-            id: {workspaceId}
         </div>
     )
 }
