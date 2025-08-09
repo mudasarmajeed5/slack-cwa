@@ -49,6 +49,7 @@ export const CreateWorkSpaceModal = () => {
                         autoFocus
                         onChange={(e) => setName(e.target.value)}
                         minLength={3}
+                        maxLength={50}
                         placeholder="Workspace name etc. 'Work', 'Personal', 'Home'"
                     />
                     <div className="flex justify-end">

@@ -13,7 +13,7 @@ const Sidebar = () => {
             <SidebarButton icon={MessagesSquare} label="DMs" isActive={false} />
             <SidebarButton icon={BellIcon} label="Activity" isActive={false}/>
             <SidebarButton icon={MoreHorizontal} label="More" isActive={false}/>
-            <div className="flex flex-col items-center justify-center gap-y-1 mt-auto">
+            <div className="flex flex-col mb-2 items-center justify-center gap-y-1 mt-auto">
                 <UserButton />
             </div>
         </aside>
