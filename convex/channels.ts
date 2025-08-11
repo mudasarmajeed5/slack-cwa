@@ -111,6 +111,7 @@ export const remove = mutation({
             throw new Error("Unauthorized")
         }
         // Todo: remove associated messages.
+        
         await ctx.db.delete(args.id)
         return args.id;
     }
