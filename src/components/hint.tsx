@@ -1,5 +1,5 @@
 "use client"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 interface HintProps {
     label: string,
     children: React.ReactNode;
