@@ -1,6 +1,5 @@
 import { useCreateMessage } from '@/features/messages/api/use-create-message'
 import { useGenerateUploadUrl } from '@/features/upload/api/use-generate-upload-url'
-import { useChannelId } from '@/hooks/use-channel-id'
 import { useWorkspaceId } from '@/hooks/use-workspace-id'
 import dynamic from 'next/dynamic'
 import Quill from 'quill'
@@ -10,23 +9,23 @@ import { toast } from 'sonner'
 import { Id } from '../../../../../../convex/_generated/dataModel'
 interface ChatInputProps {
   placeholder: string
+  conversationId: Id<"conversations">
 }
 type EditorValue = {
   image: File | null;
   body: string
 }
 type CreateMessageValues = {
-  channelId: Id<"channels">
+  conversationId: Id<"conversations">
   workspaceId: Id<"workspaces">
   body: string,
   image: Id<"_storage"> | undefined
 }
-const ChatInput = ({ placeholder }: ChatInputProps) => {
+const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<Quill | null>(null)
   const workspaceId = useWorkspaceId();
-  const channelId = useChannelId();
   const { mutate: generateUploadUrl } = useGenerateUploadUrl();
   const { mutate: createMessage } = useCreateMessage();
   const handleSubmit = async ({ body, image }: EditorValue) => {
@@ -34,7 +33,7 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
       setIsPending(true);
       editorRef.current?.enable(false);
       const values: CreateMessageValues = {
-        channelId,
+        conversationId,
         workspaceId,
         body,
         image: undefined

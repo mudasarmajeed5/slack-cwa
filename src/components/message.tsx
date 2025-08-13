@@ -11,6 +11,10 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useRemoveMessage } from '@/features/messages/api/use-remove-message';
 import { useConfirm } from '@/hooks/use-confirm';
+import { useToggleReaction } from '@/features/reactions/api/use-toggle-reaction';
+import Reactions from './Reactions';
+import { usePanel } from '@/hooks/use-panel';
+import { ThreadBar } from './thread-bar';
 const Renderer = dynamic(() => import("@/components/Renderer"), { ssr: false })
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
 
@@ -34,6 +38,7 @@ interface MessageProps {
     hideThreadButton?: boolean;
     threadCount?: number
     threadImage?: string;
+    threadName?: string
     threadTimestamp?: number;
 }
 const formatFullTime = (date: Date) => {
@@ -44,6 +49,7 @@ const Message = ({
     id,
     isAuthor,
     memberId,
+    threadName,
     authorImage,
     authorName = "Member",
     reactions,
@@ -61,10 +67,20 @@ const Message = ({
 
 }: MessageProps) => {
     const { mutate: updateMessage, isPending: isUpdatingMessage } = useUpdateMessage();
+    const { parentMessageId, onOpenMessage, onClose } = usePanel();
     const { mutate: removeMessage, isPending: isRemovingMessage } = useRemoveMessage();
     const [ConfirmDialog, confirm] = useConfirm("Delete message", "Are you sure you want to delete this message");
     const avatarFallback = authorName.charAt(0).toUpperCase();
     const isPending = isUpdatingMessage;
+    const { mutate: toggleReaction, isPending: isTogglingReaction } = useToggleReaction();
+    const handleReaction = (reaction: string) => {
+        toggleReaction({ messageId: id, value: reaction }, {
+            onError: () => {
+                toast.error("Failed to toggle reaction")
+            }
+        })
+    }
+
     const handleUpdate = ({ body }: { body: string }) => {
         updateMessage({
             id,
@@ -88,6 +104,7 @@ const Message = ({
                 onSuccess: () => {
                     toast.success("Message Deleted")
                     // close the thread if opened. 
+                    if (parentMessageId === id) onClose();
                 },
                 onError: () => {
                     toast.error("Failed to delete message");
@@ -127,6 +144,16 @@ const Message = ({
                                         <Renderer value={body} />
                                         <Thumbnail url={image} />
                                         {updatedAt && <span className='text-xs text-muted-foreground'>(edited)</span>}
+                                        <Reactions
+                                            data={reactions}
+                                            onChange={handleReaction}
+                                        />
+                                        <ThreadBar count={threadCount}
+                                            onClick={() => onOpenMessage(id)}
+                                            image={threadImage}
+                                            timestamp={threadTimestamp}
+                                            name={threadName}
+                                        />
                                     </div>
                                 )
                         }
@@ -137,10 +164,10 @@ const Message = ({
                             isAuthor={isAuthor}
                             isPending={isPending}
                             handleEdit={() => setEditingId(id)}
-                            handleThread={() => { }}
+                            handleThread={() => onOpenMessage(id)}
                             handleDelete={handleRemove}
                             hideThreadButton={hideThreadButton}
-                            handleReaction={() => { }}
+                            handleReaction={handleReaction}
                         />
                     )}
                 </div>
@@ -193,6 +220,16 @@ const Message = ({
                             <Renderer value={body} />
                             <Thumbnail url={image} />
                             {updatedAt && <span className='text-xs text-muted-foreground'>(edited)</span>}
+                            <Reactions
+                                data={reactions}
+                                onChange={handleReaction}
+                            />
+                            <ThreadBar count={threadCount}
+                                image={threadImage}
+                                onClick={() => onOpenMessage(id)}
+                                name={threadName}
+                                timestamp={threadTimestamp}
+                            />
                         </div>
                     )}
                 </div>
@@ -202,10 +239,10 @@ const Message = ({
                         isAuthor={isAuthor}
                         isPending={isPending}
                         handleEdit={() => setEditingId(id)}
-                        handleThread={() => { }}
+                        handleThread={() => onOpenMessage(id)}
                         handleDelete={handleRemove}
                         hideThreadButton={hideThreadButton}
-                        handleReaction={() => { }}
+                        handleReaction={handleReaction}
                     />
                 )}
             </div>
