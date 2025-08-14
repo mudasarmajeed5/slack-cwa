@@ -7,6 +7,8 @@ import Header from "./Header";
 import ChatInput from "./chat-input";
 import MessageList from "@/components/message-list";
 import { usePanel } from "@/hooks/use-panel";
+import { useCurrentMember } from "@/features/members/api/user-current-member";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 interface ConversationProps {
     id: Id<"conversations">
@@ -14,7 +16,10 @@ interface ConversationProps {
 const Conversation = ({ id }: ConversationProps) => {
     const memberId = useMemberId();
     const { onOpenProfile } = usePanel();
+    const workspaceId = useWorkspaceId();
+    const { data: currentMember } = useCurrentMember({ workspaceId })
     const { data: member, isLoading: memberLoading } = useGetMember({ id: memberId });
+    const isYou = currentMember?._id === memberId;
     const { results, status, loadMore } = useGetMessages({ conversationId: id })
     if (memberLoading || status === "LoadingFirstPage") {
         return <div className="h-full flex items-center justify-center">
@@ -26,7 +31,8 @@ const Conversation = ({ id }: ConversationProps) => {
             <Header
                 memberName={member?.user.name}
                 memberImage={member?.user.image}
-                onClick={() => { onOpenProfile(memberId)}}
+                onClick={() => { onOpenProfile(memberId) }}
+                isYou={isYou}
             />
             <MessageList
                 data={results}

@@ -5,7 +5,7 @@ type ResponseType = string | null;
 
 type Options = {
     onSuccess?: (data: ResponseType) => void;
-    onError?: (error: Error) => void;   
+    onError?: (error: Error) => void;
     onSettled?: () => void;
     throwError?: boolean;
 }
@@ -19,7 +19,8 @@ export const useGenerateUploadUrl = () => {
     const isError = useMemo(() => status === "error", [status])
     const isSettled = useMemo(() => status === "settled", [status])
     const mutation = useMutation(api.upload.generateUploadUrl);
-    const mutate = useCallback(async (_values: {}, options?: Options) => {
+
+    const mutate = useCallback(async (options?: Options) => {
         try {
             setData(null);
             setError(null);

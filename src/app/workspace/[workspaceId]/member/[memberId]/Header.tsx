@@ -1,13 +1,18 @@
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FaChevronDown } from "react-icons/fa";
+import { useCurrentMember } from "@/features/members/api/user-current-member";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useState } from "react";
 interface HeaderProps {
     memberName?: string
     memberImage?: string
     onClick?: () => void;
+    isYou: boolean;
 }
-const Header = ({ memberImage, memberName = "Member", onClick, }: HeaderProps) => {
+const Header = ({ memberImage, memberName = "Member", onClick, isYou }: HeaderProps) => {
     const avatarFallback = memberName.charAt(0).toUpperCase();
+
     return (
         <>
             <div className="bg-white border-b h-[49px] flex items-center px-4 overflow-hidden">
@@ -26,6 +31,7 @@ const Header = ({ memberImage, memberName = "Member", onClick, }: HeaderProps) =
                     <span className="truncate">
                         {memberName}
                     </span>
+                    <span className="text-xs text-muted-foregroud text-amber-900">{isYou && "(Message Yourself)"}</span>
                     <FaChevronDown className="size-2.5 ml-2" />
                 </Button>
             </div>
