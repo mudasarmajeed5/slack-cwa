@@ -6,12 +6,14 @@ import { Loader } from "lucide-react";
 import Header from "./Header";
 import ChatInput from "./chat-input";
 import MessageList from "@/components/message-list";
+import { usePanel } from "@/hooks/use-panel";
 
 interface ConversationProps {
     id: Id<"conversations">
 }
 const Conversation = ({ id }: ConversationProps) => {
     const memberId = useMemberId();
+    const { onOpenProfile } = usePanel();
     const { data: member, isLoading: memberLoading } = useGetMember({ id: memberId });
     const { results, status, loadMore } = useGetMessages({ conversationId: id })
     if (memberLoading || status === "LoadingFirstPage") {
@@ -24,7 +26,7 @@ const Conversation = ({ id }: ConversationProps) => {
             <Header
                 memberName={member?.user.name}
                 memberImage={member?.user.image}
-                onClick={() => { }}
+                onClick={() => { onOpenProfile(memberId)}}
             />
             <MessageList
                 data={results}
